@@ -1,0 +1,38 @@
+server:
+  port: 3344
+spring:
+  application:
+    name: cloud-config-server
+  cloud:
+    config:
+      server:
+        git:
+#          uri: git@github.com:chenchuanpeng/springcloud-config.git # github的仓库地址 会访问不到数据要注意
+          uri: https://github.com/chenchuanpeng/springcloud-config.git # github的仓库地址
+          search-paths: # 搜索目录
+            - springcloud-config
+      #读取分支
+      label: master
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://localhost:7001/eureka
+  #      defaultZone: http://eureka7001.com:7001/eureka,http://eureka7002.com:7002/eureka
+  instance:
+    instance-id: cloud-config-server
+    prefer-ip-address: true
+#rabbitmq 相关配置，暴露bus刷新配置的端点
+# 使用 curl -X POST http://localhost:3344/actuator/bus-refresh 发送post请求告知其他客户端
+management:
+  endpoints:
+    web:
+      exposure:
+        include: 'bus-refresh'
